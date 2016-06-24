@@ -14,17 +14,17 @@ C# 自 2002 年 1 月发布 1.0 起，就支持装箱与拆箱（与 Java 中意
 ```java
 public class Boxing {
 
-    Integer box(int i) {
-        return i;
-    }
+  Integer box(int i) {
+    return i;
+  }
 
-    int unbox(Integer i) {
-        return i;
-    }
+  int unbox(Integer i) {
+    return i;
+  }
 
-    boolean equals(Integer i, int j) {
-        return i == j;
-    }
+  boolean equals(Integer i, int j) {
+    return i == j;
+  }
 
 }
 ```
@@ -34,20 +34,20 @@ public class Boxing {
 ```java
 public class Boxing {
 
-    public Boxing() {
-    }
+  public Boxing() {
+  }
 
-    Integer box(int i) {
-        return Integer.valueOf(i);
-    }
+  Integer box(int i) {
+    return Integer.valueOf(i);
+  }
 
-    int unbox(Integer i) {
-        return i.intValue();
-    }
+  int unbox(Integer i) {
+    return i.intValue();
+  }
 
-    boolean equals(Integer i, int j) {
-        return i.intValue() == j;
-    }
+  boolean equals(Integer i, int j) {
+    return i.intValue() == j;
+  }
 
 }
 ```
@@ -113,9 +113,9 @@ Integer i = (Integer) o;
 ```java
 public class Equals {
 
-    boolean equals(boolean a, boolean b) {
-        return a == b;
-    }
+  boolean equals(boolean a, boolean b) {
+    return a == b;
+  }
 
 }
 ```
