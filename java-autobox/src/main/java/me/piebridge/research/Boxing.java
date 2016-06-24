@@ -30,4 +30,15 @@ public class Boxing {
         boolean bd = d == da;
     }
 
+    Integer sum(Integer max) {
+        if (max == null) {
+            return null;
+        }
+        Integer s = 0;
+        for (Integer i = 0; i <= max; ++i) {
+            s += i;
+        }
+        return s;
+    }
+
 }
