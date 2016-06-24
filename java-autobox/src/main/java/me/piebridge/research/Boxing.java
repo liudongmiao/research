@@ -20,6 +20,7 @@ public class Boxing {
     }
 
     void checkNan() {
+        Object o = 42;
         double d = Double.NaN;
         Double da = Double.NaN;
         Double db = Double.NaN;

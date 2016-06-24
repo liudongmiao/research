@@ -8,7 +8,7 @@
 
 Java 1.5 引入了自动装箱（Autoboxing）与拆箱（Unboxing）的概念。事实上，装箱（Boxing）与拆箱源自 C#，虽然 C# 可以认为是微软向 Java 致敬。
 
-C# 自 2002 年 1 月发布 1.0 起，就支持装箱与拆箱；而 Java 自 2002 年 12 月起，就开始考虑支持装箱，这些定义在[JSR 201](https://www.jcp.org/en/jsr/detail?id=201)中。虽然 C# 发布 1.0 以后 1 个月后，Java 就发布了 1.4，但是 Java 直到 2004 年 9 月才发布 1.5 开始支持自动装箱与拆箱。 
+C# 自 2002 年 1 月发布 1.0 起，就支持装箱与拆箱（与 Java 中意义不同）；而 Java 自 2002 年 12 月起，就开始考虑支持装箱，这些定义在 [JSR 201](https://www.jcp.org/en/jsr/detail?id=201) 中。虽然 C# 发布 1.0 以后 1 个月后，Java 就发布了 1.4，但是 Java 直到 2004 年 9 月才发布 1.5 开始支持自动装箱与拆箱。
 
 # Java 中自动装箱只是语法糖
 
@@ -59,28 +59,30 @@ public class Boxing {
 
 | 基本类型 | 包装类 | 自动装箱，自 1.5 起 | 拆箱 |
 | ------- | ----- | ------- | --- |
-| boolean | Boolean | valueOf(int) | booleanValue |
-| byte | Byte | valueOf(byte) | byteValue |
-| char | Character | valueOf(char) | charValue |
-| float | Float | valueOf(float) | floatValue |
-| int | Integer | valueOf(int) | intValue |
-| long | Long | valueOf(long) | longValue |
-| short | Short | valueOf(short) | shortValue |
-| double | Double | valueOf(double) | doubleValue |
+| boolean | Boolean | valueOf(int) | booleanValue() |
+| byte | Byte | valueOf(byte) | byteValue() |
+| char | Character | valueOf(char) | charValue() |
+| float | Float | valueOf(float) | floatValue() |
+| int | Integer | valueOf(int) | intValue() |
+| long | Long | valueOf(long) | longValue() |
+| short | Short | valueOf(short) | shortValue() |
+| double | Double | valueOf(double) | doubleValue() |
+
+注意：所有包装类，都是`final`的，无法扩展；同时，在拆箱过程中，可能会出现空指针异常`NullPointerException`。
 
 # 装箱在 C# 与 Java 中意义不同
 
 虽然 C# 有装箱与拆箱概念，但意义完全不一样。C# 中的装箱差不多是这个意思：
 
 ```java
-Integer i = Integer.valueOf("3");
+Integer i = Integer.valueOf("42");
 Object o = i;
 ```
 
 而 C# 的拆箱差不多是这个意思：
 
-```
-Object o = 3;
+```java
+Object o = 42;
 Integer i = (Integer) o;
 ```
 
@@ -88,24 +90,26 @@ Integer i = (Integer) o;
 
 # valueOf 中的缓存范围及自动装箱可能的异常
 
-自此，我们看到了 Java 1.5 中引入的自动装箱，实际上都是`valueOf`。根据 Java 语言规范（目前 Oracle 官方仅提供 1.6 及后续版本），对于特定范围内的基本甚至，在装箱后的引用应该完全一样。语言规范规定：
+自此，我们看到了 Java 1.5 中引入的自动装箱，实际上都是`valueOf`。根据 Java 语言规范（目前 Oracle 官方仅提供 1.6 及后续版本），对于特定范围内的基本类型，在装箱后的引用应该一样（以下简称为“缓存”）。语言规范规定：
 
-| 基本类型 | 包装类 | 规范定义 | Oracle 实现 |
+| 基本类型 | 包装类 | 规范缓存要求 | Oracle 实现 |
 | ------- | ----- | --- | ---- |
 | boolean | Boolean | 所有 | 一致 |
 | byte | Byte | 所有 | 一致 |
 | char | Character | [\u0000, \u007f] | 一致 |
 | float | Float | 无 | 一致 |
-| int | Integer | [-128, 127] | 基本一致，上限可变* |
+| int | Integer | [-128, 127] | 基本一致，上限可变<sup>`*`</sup> |
 | long | Long | 无 | [-128, 127] |
 | short | Short | [-128, 127] | 一致 |
 | double | Double | 无 | 一致 |
 
-对于`Integer`中自动装箱值一样的上限，可以通过`-XX:AutoBoxCacheMax=<size>`来指定。由于实现采用一个数组，而数组大小理论上限是`0x7fffffff`(Integer.MAX_VALUE)，可以算出理论最大上限。但实际上，由于要预先分配内存，所以与内存相关。
+<sup>`*`</sup> 对于`Integer`中自动装箱值一样的上限，可以通过`-XX:AutoBoxCacheMax=<size>`来指定。由于实现采用一个数组，而数组大小理论上限是`0x7fffffff`(Integer.MAX_VALUE)，可以算出理论最大上限。但实际上，由于要预先分配内存，所以实际上限与内存相关，但肯定超过`127`。
 
-由于`valueOf`绝大部分值都不缓存，会生成对象。在生成对象过程中，可能会出现内存不足`OutOfMemoryError`。
+值得注意的是，由于`valueOf`绝大部分值都不缓存，会生成对象，在生成对象过程中，可能会出现内存不足`OutOfMemoryError`。
 
-# == 到底是啥
+在实际中，也不要装箱后使用`==`比较两个对象的引用，因为这种应用场景是不合理的。
+
+# `==` 到底是啥
 
 一般理解的意义，`==`是比较引用，但是对于基本类型，本身就不是一个对象，`==`是什么呢？我们还是可以看反编译后的结果，这时，神器 IDEA 也看不明白，只能使用`javac`查看了。
 
@@ -133,9 +137,9 @@ public class Equals {
       10: ireturn
 ```
 
-这里无意解释`jvm`各种指令，只需要关心真正有含义的`if_icmpne`就好，以下是基本类型及对象使用`==`中关键指令：
+这里无意解释`jvm`各种指令，仅关心真正有含义的`if_icmpne`就好，以下是基本类型及对象使用`==`中关键指令：
 
-| 类型 | 指令 | 解释 |
+| 类型 | `jvm`指令 | 解释 |
 | --- | --- | --- |
 | boolean | if_icmpne | 两个整数是否相等, 同 int |
 | byte | if_icmpne | 两个整数是否相等, 同 int |
@@ -148,9 +152,8 @@ public class Equals {
 | Object | if_acmpne | 比较两个对象引用 |
 | 数组 | if_acmpne | 比较两个对象引用 |
 
-通过直接的`jvm`指令，我们可以看到，对于浮点数而言，`NaN != NaN`。而至于`NaN != NaN`，可以理解为是规范，因为`NaN`有多种表达方式。有关浮点数的存储中可能的坑，可以阅读鄙人的[《0.1 + 0.2你算对了吗？》](http://mp.weixin.qq.com/s?__biz=MzAwOTE0ODEwMQ==&mid=2650686196&idx=1&sn=281521f872016b49fca2d1b4d7c9e737)。
+通过直接的`jvm`指令，我们可以看到，对于浮点数而言，`NaN != NaN`。而至于`NaN != NaN`，可以理解为是规范，因为`NaN`有多种表达方式。有关浮点数的存储中可能的坑，可以阅读鄙人的[《0.1 + 0.2你算对了吗？》](http://mp.weixin.qq.com/s?__biz=MzAwOTE0ODEwMQ==&mid=2650686196&idx=1&sn=281521f872016b49fca2d1b4d7c9e737)。而在这个过程中，IDEA 有一个 bug：
 
-而在这个过程中，IDEA 有一个 bug：
 ```java
 double d = Double.NaN;
 Double da = Double.NaN;
