@@ -3,9 +3,6 @@
 ### 原文：https://github.com/liudongmiao/research/blob/master/java-autobox/autobox.md
 ### 简介：本文通过反编译 Java 代码，探究自动装箱与拆箱过程；同时更进一步，描述基本类型 == 意义。
 
-
-# 起初，Java 中并没有自动装箱与拆箱
-
 Java 1.5 引入了自动装箱（Autoboxing）与拆箱（Unboxing）的概念。事实上，装箱（Boxing）与拆箱源自 C#，虽然 C# 可以认为是微软向 Java 致敬。
 
 C# 自 2002 年 1 月发布 1.0 起，就支持装箱与拆箱（与 Java 中意义不同）；而 Java 自 2002 年 12 月起，就开始考虑支持装箱，这些定义在 [JSR 201](https://www.jcp.org/en/jsr/detail?id=201) 中。虽然 C# 发布 1.0 以后 1 个月后，Java 就发布了 1.4，但是 Java 直到 2004 年 9 月才发布 1.5 开始支持自动装箱与拆箱。
@@ -145,7 +142,7 @@ public class Equals {
 | byte | if_icmpne | 两个整数是否相等, 同 int |
 | char | if_icmpne | 两个整数是否相等, 同 int |
 | double | dcmpl | 比较两个双精度数，分别返回 0, 1, -1；如果为 NaN，返回 1 |
-| float | fcmpl | 比较两个单精度数，分别返回 0, 1, -1；如果为 NaN，返回 1 |  |
+| float | fcmpl | 比较两个单精度数，分别返回 0, 1, -1；如果为 NaN，返回 1 |
 | int | if_icmpne | 两个整数是否相等  |
 | long | lcmp | 比较两个长整数，分别返回 0, 1, -1 |
 | short | if_icmpne | 两个整数是否相等, 同 int |
@@ -159,7 +156,7 @@ double d = Double.NaN;
 Double da = Double.NaN;
 Double db = Double.NaN;
 boolean ba = d == d; // false
-boolean bb = da == da; // true (idea提供false)
+boolean bb = da == da; // true (idea提示false)
 boolean bc = da == db; // false
 boolean bd = d == da; // false
 ```
