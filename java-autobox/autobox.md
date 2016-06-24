@@ -59,7 +59,7 @@ public class Boxing {
 
 | 基本类型 | 包装类 | 自动装箱，自 1.5 起 | 拆箱 |
 | ------- | ----- | ------- | --- |
-| boolean | Boolean | valueOf(int) | booleanValue() |
+| boolean | Boolean | valueOf(boolean) | booleanValue() |
 | byte | Byte | valueOf(byte) | byteValue() |
 | char | Character | valueOf(char) | charValue() |
 | float | Float | valueOf(float) | floatValue() |
